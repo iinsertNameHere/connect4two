@@ -1,4 +1,5 @@
 import numpy as np
+from requests import get
 from fastapi import FastAPI, Request
 from random import randint
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -17,7 +18,7 @@ def cleanup_games():
 
 def request():
     try:
-        requests.get("https://connect4two.onrender.com")
+        get("https://connect4two.onrender.com")
     except:
         print("Failed to send Request")
 
