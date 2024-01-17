@@ -3,3 +3,4 @@ numpy
 pygame
 requests
 uvicorn
+apscheduler

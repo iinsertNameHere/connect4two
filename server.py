@@ -5,6 +5,18 @@ from random import randint
 ROW_COUNT = 6
 COLUMN_COUNT = 7
 
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def request():
+    try:
+        requests.get("https://connect4two.onrender.com")
+    except:
+        print("Failed to send Request")
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=request, trigger="interval", seconds=600)
+scheduler.start()
+
 games = {}
 
 def create_board():
