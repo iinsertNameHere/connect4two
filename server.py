@@ -2,6 +2,7 @@ import numpy as np
 from fastapi import FastAPI, Request
 from random import randint
 from apscheduler.schedulers.background import BackgroundScheduler
+import time
 
 ROW_COUNT = 6
 COLUMN_COUNT = 7
