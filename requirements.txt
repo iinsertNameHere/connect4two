@@ -4,3 +4,4 @@ pygame
 requests
 uvicorn
 apscheduler
+tkinter

@@ -4,6 +4,8 @@ import sys
 import math
 from requests import post, get
 import json
+from tkinter import simpledialog, messagebox
+from threading import Thread
 
 server = "https://connect4two.onrender.com"
 
@@ -71,7 +73,15 @@ game_over = False
 turn = 0
 winner = 0
 
-code = input("Join-Code: ").strip()
+code = simpledialog.askstring("Join a Game", "Enter a Join-Code (Press Cancel for new Game):")
+if not code:
+    code = ""
+else:
+    code = code.strip()
+
+def show_code():
+    global code
+    messagebox.showinfo("Your Join-Code", code)
 
 def create_game():
     global code, id
@@ -123,6 +133,8 @@ pygame.display.update()
  
 myfont = pygame.font.SysFont("monospace", 75)
 
+first = True
+
 while True:
     id = 0
     board = []
@@ -137,6 +149,10 @@ while True:
     else:
         join()
     sync()
+
+    if first:
+        Thread(target=show_code).start()
+        first = False
 
     screen.fill(BLACK)
     pygame.display.update()

@@ -1,11 +1,18 @@
 import numpy as np
 from fastapi import FastAPI, Request
 from random import randint
+from apscheduler.schedulers.background import BackgroundScheduler
 
 ROW_COUNT = 6
 COLUMN_COUNT = 7
 
-from apscheduler.schedulers.background import BackgroundScheduler
+games = {}
+
+def cleanup_games():
+    for k in games.keys():
+        if ((time.time() * 1000) - games[k].get('accessTime')) > 300000:
+            print("Closed Game:", k)
+            del games[k]
 
 def request():
     try:
@@ -14,10 +21,8 @@ def request():
         print("Failed to send Request")
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=request, trigger="interval", seconds=600)
+scheduler.add_job(func=request, trigger="interval", seconds=300)
 scheduler.start()
-
-games = {}
 
 def create_board():
     board = np.zeros((ROW_COUNT,COLUMN_COUNT))
@@ -28,6 +33,11 @@ def get_joincode():
 
 app = FastAPI()
 
+@app.get('/')
+async def index():
+    cleanup_games()
+    return {"active_games": len(games.keys())}
+
 @app.get('/create')
 async def create():
     global games
@@ -37,7 +47,8 @@ async def create():
         "players": 1,
         "winner": 0,
         "turn": 0,
-        "board": create_board()
+        "board": create_board(),
+        "accessTime": time.time() * 1000
     }
     games[code] = game_obj
 
@@ -57,6 +68,7 @@ async def join(code: str):
         game_obj["winner"] = 0
         game_obj["turn"] = 0
         game_obj["board"] = create_board()
+        game_obj["accessTime"] = time.time() * 1000
 
     game_obj["players"] += 1
 
@@ -70,10 +82,10 @@ async def join(code: str):
 async def sync(code: str):
     global games
     game_obj = games.get(code)
-    if game_obj:
-        return game_obj
-    else:
+    if not game_obj:
         return {"status": "FAILED"}
+    game_obj["accessTime"] = time.time() * 1000
+    return game_obj
 
 @app.post('/{code}/update')
 async def update(code: str, request: Request):
@@ -81,7 +93,8 @@ async def update(code: str, request: Request):
     
     game_obj = games.get(code)
     if not game_obj:
-        return {"status": "FAILED"} 
+        return {"status": "FAILED"}
+    game_obj["accessTime"] = time.time() * 1000
 
     jbody = await request.json()
     playerid = jbody.get('playerid')
@@ -100,7 +113,8 @@ async def win(code: str, request: Request):
 
     game_obj = games.get(code)
     if not game_obj:
-        return {"status": "FAILED"} 
+        return {"status": "FAILED"}
+    game_obj["accessTime"] = time.time() * 1000
 
     jbody = await request.json()
     winner = jbody.get('winner')
