@@ -1,0 +1,5 @@
+fastapi
+numpy
+pygame
+requests
+uvicorn
