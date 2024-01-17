@@ -5,7 +5,7 @@ import math
 from requests import post, get
 import json
 
-server = input("Server URL: ").strip()
+server = "https://connect4two.onrender.com"
 
 BLUE = (0,0,255)
 BLACK = (0,0,0)
