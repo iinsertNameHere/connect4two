@@ -207,10 +207,11 @@ try:
                             row = get_next_open_row(localboard, col)
                             drop_piece(localboard, row, col, id)
 
+                            update(localboard)
+                            sync()
+
                             if winning_move(localboard, id):
                                 gameover(id)
-
-                            update(localboard)
                         
             draw_board(board)
 
