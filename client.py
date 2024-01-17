@@ -135,92 +135,95 @@ myfont = pygame.font.SysFont("monospace", 75)
 
 first = True
 
-while True:
-    id = 0
-    board = []
-    game_over = False
-    turn = 0
-    winner = 0
-    delay = 1000
+try:
+    while True:
+        id = 0
+        board = []
+        game_over = False
+        turn = 0
+        winner = 0
+        delay = 1000
 
-    if code == "":
-        create_game()
-        print("Your Join-Code:", code)
-    else:
-        join()
-    sync()
-
-    if first:
-        Thread(target=show_code).start()
-        first = False
-
-    screen.fill(BLACK)
-    pygame.display.update()
-
-    label = myfont.render(f"Player {id}", 1, BLUE)
-    screen.blit(label, (40,10))
-    pygame.display.update()
-
-    while turn == 0:
-        sync()
-        pygame.time.wait(500)
-
-    pygame.time.wait(5000)
-
-    while not game_over:
-
-        if delay <= 0:
-            sync()
-            delay = 1000
-        delay -= 1
-
-        for event in pygame.event.get(): 
-            if event.type == pygame.MOUSEMOTION:
-                pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
-                posx = event.pos[0]
-                if turn != 0:
-                    if turn == id:
-                        if id == 1:
-                            pygame.draw.circle(screen, RED, (posx, int(SQUARESIZE/2)), RADIUS)
-                        else:
-                            pygame.draw.circle(screen, YELLOW, (posx, int(SQUARESIZE/2)), RADIUS)
-                    else: 
-                        if id == 1:
-                            pygame.draw.circle(screen, RED, (posx, int(SQUARESIZE/2)), RADIUS)
-                        else:
-                            pygame.draw.circle(screen, YELLOW, (posx, int(SQUARESIZE/2)), RADIUS)
-                
-
-            pygame.display.update()
-    
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
-                #print(event.pos)
-                # Ask for Player Input
-                if turn == id:
-                    localboard = board
-                    posx = event.pos[0]
-                    col = int(math.floor(posx/SQUARESIZE))
-    
-                    if is_valid_location(localboard, col):
-                        row = get_next_open_row(localboard, col)
-                        drop_piece(localboard, row, col, id)
-
-                        if winning_move(localboard, id):
-                            gameover(id)
-
-                        update(localboard)
-                    
-        draw_board(board)
-
-    if game_over:
-        if winner != 0:
-            label = myfont.render(f"Player {winner} wins!", 1, RED if winner == 1 else YELLOW)
-            screen.blit(label, (40,10))
-            pygame.display.update()
+        if code == "":
+            create_game()
+            print("Your Join-Code:", code)
         else:
-            label = myfont.render(f"No winner!", 1, BLUE)
-            screen.blit(label, (40,10))
-            pygame.display.update()
-    
-    pygame.time.wait(3000)
+            join()
+        sync()
+
+        if first:
+            Thread(target=show_code).start()
+            first = False
+
+        screen.fill(BLACK)
+        pygame.display.update()
+
+        label = myfont.render(f"Player {id}", 1, BLUE)
+        screen.blit(label, (40,10))
+        pygame.display.update()
+
+        while turn == 0:
+            sync()
+            pygame.time.wait(500)
+
+        pygame.time.wait(5000)
+
+        while not game_over:
+
+            if delay <= 0:
+                sync()
+                delay = 1000
+            delay -= 1
+
+            for event in pygame.event.get(): 
+                if event.type == pygame.MOUSEMOTION:
+                    pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+                    posx = event.pos[0]
+                    if turn != 0:
+                        if turn == id:
+                            if id == 1:
+                                pygame.draw.circle(screen, RED, (posx, int(SQUARESIZE/2)), RADIUS)
+                            else:
+                                pygame.draw.circle(screen, YELLOW, (posx, int(SQUARESIZE/2)), RADIUS)
+                        else: 
+                            if id == 1:
+                                pygame.draw.circle(screen, RED, (posx, int(SQUARESIZE/2)), RADIUS)
+                            else:
+                                pygame.draw.circle(screen, YELLOW, (posx, int(SQUARESIZE/2)), RADIUS)
+                    
+
+                pygame.display.update()
+        
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.draw.rect(screen, BLACK, (0,0, width, SQUARESIZE))
+                    #print(event.pos)
+                    # Ask for Player Input
+                    if turn == id:
+                        localboard = board
+                        posx = event.pos[0]
+                        col = int(math.floor(posx/SQUARESIZE))
+        
+                        if is_valid_location(localboard, col):
+                            row = get_next_open_row(localboard, col)
+                            drop_piece(localboard, row, col, id)
+
+                            if winning_move(localboard, id):
+                                gameover(id)
+
+                            update(localboard)
+                        
+            draw_board(board)
+
+        if game_over:
+            if winner != 0:
+                label = myfont.render(f"Player {winner} wins!", 1, RED if winner == 1 else YELLOW)
+                screen.blit(label, (40,10))
+                pygame.display.update()
+            else:
+                label = myfont.render(f"No winner!", 1, BLUE)
+                screen.blit(label, (40,10))
+                pygame.display.update()
+        
+        pygame.time.wait(3000)
+except KeyboardInterrupt:
+    pass

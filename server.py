@@ -10,8 +10,8 @@ COLUMN_COUNT = 7
 
 games = {}
 
-def cleanup_games():
-    for k in games.keys():
+async def cleanup_games():
+    for k in await list(games):
         if ((time.time() * 1000) - games[k].get('accessTime')) > 300000:
             print("Closed Game:", k)
             del games[k]
@@ -37,7 +37,7 @@ app = FastAPI()
 
 @app.get('/')
 async def index():
-    cleanup_games()
+    await cleanup_games()
     return {"active_games": len(games.keys())}
 
 @app.get('/create')
