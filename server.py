@@ -11,7 +11,8 @@ COLUMN_COUNT = 7
 games = {}
 
 async def cleanup_games():
-    for k in await list(games):
+    global games
+    for k in list(games):
         if ((time.time() * 1000) - games[k].get('accessTime')) > 300000:
             print("Closed Game:", k)
             del games[k]
